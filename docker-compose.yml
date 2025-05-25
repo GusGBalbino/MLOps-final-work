@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  # Serviço da API FastAPI
+  api:
+    build: .
+    container_name: mlops-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./API/Features/Artefatos:/app/API/Features/Artefatos
+      - ./API/Modelo/Artefatos:/app/API/Modelo/Artefatos
+      - ./mlruns:/app/mlruns
+      - ./smoking_drinking.parquet:/app/smoking_drinking.parquet
+    environment:
+      - PYTHONPATH=/app
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+    depends_on:
+      - mlflow
+    command: ["python", "API/main.py"]
+    networks:
+      - mlops-network
+
+  # Serviço do MLflow
+  mlflow:
+    build: .
+    container_name: mlops-mlflow
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlruns:/app/mlruns
+    environment:
+      - PYTHONPATH=/app
+    command: ["mlflow", "ui", "--host", "0.0.0.0", "--port", "5000"]
+    networks:
+      - mlops-network
+
+  # Serviço para treinamento (execução manual)
+  trainer:
+    build: .
+    container_name: mlops-trainer
+    volumes:
+      - ./API/Features/Artefatos:/app/API/Features/Artefatos
+      - ./API/Modelo/Artefatos:/app/API/Modelo/Artefatos
+      - ./mlruns:/app/mlruns
+      - ./smoking_drinking.parquet:/app/smoking_drinking.parquet
+    environment:
+      - PYTHONPATH=/app
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+    working_dir: /app/API
+    depends_on:
+      - mlflow
+    networks:
+      - mlops-network
+    profiles:
+      - training  # Este serviço só roda quando especificamente chamado
+
+networks:
+  mlops-network:
+    driver: bridge
+
+volumes:
+  mlflow_data:
+  model_artifacts:
+  feature_artifacts: 
