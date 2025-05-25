@@ -273,15 +273,3 @@ volumes:
   - ./mlruns                   # Dados do MLflow
   - ./smoking_drinking.parquet # Dataset
 ```
-
-### Rede
-
-Todos os serviços rodam na mesma rede Docker (`mlops-network`) permitindo comunicação entre containers.
-
-## 📊 MLflow Integration
-
-### Acesso ao MLflow
-- **URL**: http://localhost:5000
-- **Experimentos**: Visualize comparações entre modelos
-- **Métricas**: Accuracy, Precision, Recall, F1-score
-- **Artefatos**: Modelos, parâmetros, dados
