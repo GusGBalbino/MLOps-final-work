@@ -203,7 +203,7 @@ A API usa **Pydantic** para:
 ./docker-scripts.sh start
 ```
 
-**Pronto!** Sua aplicação está rodando:
+**Pronto!** A aplicação está rodando:
 - 📖 **API**: http://localhost:8000
 - 📊 **MLflow**: http://localhost:5000
 
